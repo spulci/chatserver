@@ -18,7 +18,7 @@ public class ChatServerTest
     @BeforeAll
     static void init() throws InterruptedException, IOException{
         server = ChatServer.start();
-        server.waitFor();
+        Thread.sleep(2000);
         client = new ChatClient();
     }
 
@@ -37,8 +37,6 @@ public class ChatServerTest
     @Test
     @DisplayName("Test connessione client")
     void whenOneNewClientConnected(){
-        //Send an empty message to skip the server welcome message
-        client.sendMessage("");
         String respA = client.sendMessage("Questo è un msg di prova");
         assertEquals("Questo è un msg di prova", respA);
     }

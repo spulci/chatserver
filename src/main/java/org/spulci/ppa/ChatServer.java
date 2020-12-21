@@ -43,9 +43,6 @@ public class ChatServer {
                     // Accept the next connection
                     listener.accept( null, this );
 
-                    // Greet the client
-                    ch.write( ByteBuffer.wrap( "Hello, I am Echo Server 2020, let's have an engaging conversation!\n".getBytes() ) );
-
                     // Allocate a byte buffer (4K) to read from the client
                     ByteBuffer byteBuffer = ByteBuffer.allocate( 4096 );
                     try
