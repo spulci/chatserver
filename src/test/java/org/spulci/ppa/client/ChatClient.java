@@ -1,4 +1,4 @@
-package org.spulci.ppa;
+package org.spulci.ppa.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
