@@ -15,7 +15,6 @@ import lombok.extern.java.Log;
 public class ChatClient {
     private AsynchronousSocketChannel client;
     private Future<Void> future;
-    private static ChatClient instance;
 
     public ChatClient() {
         try {
@@ -27,12 +26,6 @@ public class ChatClient {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static ChatClient getInstance() {
-        if (instance == null)
-            instance = new ChatClient();
-        return instance;
     }
 
     private void start() {
@@ -107,7 +100,7 @@ public class ChatClient {
     }
 
     public static void main(String[] args) throws Exception {
-        ChatClient client = ChatClient.getInstance();
+        ChatClient client = new ChatClient();
         client.start();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         String line;

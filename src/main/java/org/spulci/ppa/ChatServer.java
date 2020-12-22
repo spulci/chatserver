@@ -17,20 +17,14 @@ import java.io.File;
 import java.io.IOException;
 
 @Log
-public class ChatServer {
+public class ChatServer{
     
     private AsynchronousServerSocketChannel listener;
     private final ArrayList<AsynchronousSocketChannel> asynchSocketChannelList = new ArrayList<>();
-    public ChatServer()
-    {
-        try
-        {   
-            //AsynchronousChannelGroup group = AsynchronousChannelGroup.withThreadPool(Executors.newCachedThreadPool());
-           
+    public ChatServer(){
+        try{   
             listener = AsynchronousServerSocketChannel.open().bind(new InetSocketAddress("localhost",10000));
             log.info("Server started on port 10000");
-            
-            // Listen for a new request
             listener.accept( null, new CompletionHandler<AsynchronousSocketChannel,Void>() {
 
                 @Override
@@ -40,30 +34,25 @@ public class ChatServer {
                         asynchSocketChannelList.add(ch);
                     }
 
-                    // Accept the next connection
                     listener.accept( null, this );
 
-                    // Allocate a byte buffer (4K) to read from the client
-                    ByteBuffer byteBuffer = ByteBuffer.allocate( 4096 );
+                    ByteBuffer byteBuffer = ByteBuffer.allocate(4096);
                     try
                     {
-                        // Read the first line
+
                         int bytesRead = ch.read( byteBuffer ).get(30, TimeUnit.SECONDS);
 
                         boolean isRunning = true;
                         while( bytesRead != -1 && isRunning ){   
 
-                            // Make sure that we have data to read
                             if( byteBuffer.position() > 2 ){
-                                // Make the buffer ready to read
+
                                 byteBuffer.flip();
 
-                                // Convert the buffer into a line
                                 byte[] lineBytes = new byte[ bytesRead ];
                                 byteBuffer.get( lineBytes, 0, bytesRead );
                                 String line = new String( lineBytes );
 
-                                // Broadcast to all clients
                                 asynchSocketChannelList.stream().forEach(currentChannel ->
                                 {
                                     currentChannel.write(ByteBuffer.wrap( line.getBytes() ));
@@ -71,15 +60,12 @@ public class ChatServer {
 
                                 log.info("Inviato in broadcast: " + line);
 
-                                // Make the buffer ready to write
                                 byteBuffer.clear();
 
-                                // Read the next line
-                                bytesRead = ch.read( byteBuffer ).get(30, TimeUnit.SECONDS);
+                                bytesRead = ch.read(byteBuffer).get(30, TimeUnit.SECONDS);
                             }
-                            else
-                            {
-                                // An empty line signifies the end of the conversation in our protocol
+                            else{
+                                //Empty line
                                 isRunning = false;
                             }
                         }
@@ -91,35 +77,32 @@ public class ChatServer {
                         log.log(Level.SEVERE, "Execution exception raised", e);
                     }
                     catch (TimeoutException e){
-                        // The user exceeded the 20 second timeout, so close the connection
                         log.info("Closing current connection due to reached timeout");
                         ch.write(ByteBuffer.wrap( "Good Bye\n".getBytes()));
                     }
 
                     log.info("Ending conversation with a client");
                     try{
-                        // Close the connection if we need to
-                        if( ch.isOpen() ){   
+                        if(ch.isOpen()){   
                             synchronized(asynchSocketChannelList){
                                 asynchSocketChannelList.remove(ch);
                             }
-
                             ch.close();
                         }
                     }
                     catch (IOException e1){
-                        log.severe("IOException");
+                        log.log(Level.SEVERE, "IOException while closing a connection!!", e1);
                     }
                 }
 
                 @Override
                 public void failed(Throwable exc, Void att){
-                    ///...
+                    log.log(Level.SEVERE, "Operation failed! Client connection not accepted!", exc);
                 }
             });
         }
         catch (IOException e){
-            log.log(Level.SEVERE, "Having some IO issues...exiting" , e);
+            log.log(Level.SEVERE, "Having some IO issues...exiting", e);
             System.exit(0);
         }
     }
@@ -140,7 +123,7 @@ public class ChatServer {
             Thread.currentThread().join();
         }
         catch(Exception e){
-            log.log(Level.SEVERE , "Server can't start", e);
+            log.log(Level.SEVERE , "Server can't start!", e);
         }
         
     }
