@@ -55,10 +55,10 @@ public class ChatServer{
 
                                 asynchSocketChannelList.stream().forEach(currentChannel ->
                                 {
-                                    currentChannel.write(ByteBuffer.wrap( line.getBytes() ));
+                                    currentChannel.write(ByteBuffer.wrap(line.getBytes()));
                                 });
 
-                                log.info("Inviato in broadcast: " + line);
+                                log.info("Broadcasted line: " + line);
 
                                 byteBuffer.clear();
 
