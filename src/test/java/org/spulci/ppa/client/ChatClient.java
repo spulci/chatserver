@@ -8,6 +8,7 @@ import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousSocketChannel;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.logging.Level;
 
 import lombok.extern.java.Log;
 
@@ -24,7 +25,7 @@ public class ChatClient {
             start();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "AsynchSocket issue on opening", e);
         }
     }
 
@@ -32,7 +33,7 @@ public class ChatClient {
         try {
             future.get();
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Exception while connecting to remote host", e);
         }
     }
 
@@ -41,61 +42,27 @@ public class ChatClient {
         ByteBuffer buffer = ByteBuffer.wrap(byteMsg);
         Future<Integer> writeResult = client.write(buffer);
         
-
         try {
             writeResult.get();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Issue writing msg", e);
         }
         buffer.flip();
         Future<Integer> readResult = client.read(buffer);
         try {
             readResult.get();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Issue reading msg", e);
         }
         String echo = new String(buffer.array()).trim();
         buffer.clear();
         return echo;
     }
-
-    public String readBuffer() {
-        ByteBuffer buffer = ByteBuffer.allocate(4096);
-        buffer.flip();
-
-        Future<Integer> readResult = client.read(buffer);
-        try {
-            readResult.get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        String echo = new String(buffer.array()).trim();
-        buffer.clear();
-        return echo;
-    }
-    public void writeBuffer(String msg) {
-        byte[] byteMsg = msg.getBytes();
-        ByteBuffer buffer = ByteBuffer.wrap(byteMsg);
-        buffer.flip();
-
-        Future<Integer> writeBuffer = client.write(buffer);
-        try {
-            writeBuffer.get();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //String echo = new String(buffer.array()).trim();
-        buffer.clear();
-        //return echo;
-    }
-
     public void stop() {
         try {
             client.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.log(Level.SEVERE, "Issue closing channel", e);
         }
     }
 
