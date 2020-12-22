@@ -7,7 +7,7 @@ Code has been developed with Java SE 11. Feel free to choose the JRE you prefer.
 
 ### Build and run
 
-Be sure that your
+Be sure that your pwd is the project root to execute all the commands below
 
 To build that your actual pwd is the project root dir before executing the commands below:
 
