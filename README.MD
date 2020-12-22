@@ -20,8 +20,7 @@ string to the server. The server will echo the string to the test client.*
 To start the project
 
 ```bash
-cd target
-$ java -jar echoserver-0.0.1-SNAPSHOT.jar
+$ java -jar target/echoserver-0.0.1-SNAPSHOT.jar
 ```
 To connect to server using telnet (assuming server is started on the same machine as clients and that you have telnet installed)
 
