@@ -45,7 +45,7 @@ Then start with:
 $ docker run -d -p 10000:10000 --net=host echoserver:test
 ```
 
-Open some clients connectio with:
+Open some clients connection with:
 
 ```bash
 $ telnet 10000 localhost
